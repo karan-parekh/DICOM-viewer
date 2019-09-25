@@ -1,8 +1,8 @@
 import os
 import pydicom
 import matplotlib.pyplot as plt
-from tkinter import Tk, Button, Listbox, END, Scrollbar, Frame, RIGHT
-from tkinter.filedialog import askopenfile, askdirectory
+from tkinter import Tk, Button, Listbox, Scrollbar, Frame, RIGHT, END
+from tkinter.filedialog import askdirectory
 
 
 def view(path):
@@ -10,11 +10,6 @@ def view(path):
     print("Slice location...:", dataset.get('SliceLocation', "(missing)"))
     plt.imshow(dataset.pixel_array, cmap=plt.cm.bone)
     plt.show()
-
-
-# def open_dicom():
-#     patient = askopenfile(mode='r', filetypes=[('DICOM file', '*.dcm')]).name
-#     view(patient)
 
 
 root = Tk(className="DICOM Viewer")
@@ -36,17 +31,17 @@ def open_folder():
     print(folder)
     flist = os.listdir(folder)
 
-    dcm_list = Listbox(frm, width=20)
+    sb = Scrollbar(frm, orient='vertical')
+    sb.pack(side=RIGHT, fill='y')
+
+    dcm_list = Listbox(frm, width=20, yscrollcommand=sb.set)
     dcm_list.bind("<<ListboxSelect>>", selected)
     dcm_list.pack()
     for f in flist:
         dcm_list.insert(END, f)
 
 
-file_path = Button(root, text="Choose Folder (.dcm)", padx=5, pady=5, command=open_folder)
+file_path = Button(root, text="Choose Folder (.dcm)", command=open_folder)
 file_path.pack()
-
-
-# view_button = Button(root, text="View", command=view, args=selected_dcm)
 
 root.mainloop()
