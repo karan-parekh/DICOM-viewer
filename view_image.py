@@ -32,10 +32,10 @@ def open_folder():
     flist = os.listdir(folder)
 
     sb = Scrollbar(frm, orient='vertical')
-    sb.pack(side=RIGHT, fill='y')
-
     dcm_list = Listbox(frm, width=20, yscrollcommand=sb.set)
     dcm_list.bind("<<ListboxSelect>>", selected)
+    sb.config(command=dcm_list.yview)
+    sb.pack(side=RIGHT, fill='y')
     dcm_list.pack()
     for f in flist:
         dcm_list.insert(END, f)
