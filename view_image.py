@@ -1,48 +1,28 @@
-import matplotlib.pyplot as plt
-import pydicom
 import os
-import numpy as np
-import cv2
-import math
+import pydicom
+import matplotlib.pyplot as plt
+from tkinter import Tk, Button
+from tkinter.filedialog import askopenfile
 
 data_dir = 'dicom_files/'
 patients = os.listdir(data_dir)
 
-IMG_SIZE = 150
-NO_OF_SLICES = 21
+
+def view(path):
+    dataset = pydicom.read_file(path)
+    print("Slice location...:", dataset.get('SliceLocation', "(missing)"))
+    plt.imshow(dataset.pixel_array, cmap=plt.cm.bone)
+    plt.show()
 
 
-def chunks(l, n):
-    for i in range(0, len(l), n):
-        yield l[i:i+n]
+def open_dicom():
+    patient = askopenfile(mode='r', filetypes=[('DICOM file', '*.dcm')]).name
+    view(patient)
 
 
-def mean(l):
-    return sum(l)/len(l)
+root = Tk(className="DICOM Viewer")
 
+file_path = Button(root, text="Choose File (.dcm)", padx=5, pady=5, command=open_dicom)
+file_path.pack()
 
-def main():
-    for _ in patients[:2]:
-        slices = [pydicom.read_file(data_dir + '/' + s) for s in os.listdir(data_dir)]  # 61 slices
-        slices.sort(key=lambda x: int(x.ImagePositionPatient[2]))
-
-        new_slices = []
-
-        slices = [cv2.resize(np.array(each_slice.pixel_array), (IMG_SIZE, IMG_SIZE)) for each_slice in slices]
-        chunk_size = math.ceil(len(slices) / NO_OF_SLICES)
-
-        for slice_chunk in chunks(slices, chunk_size):
-            slice_chunk = list(map(mean, zip(*slice_chunk)))
-            new_slices.append(slice_chunk)
-
-        new_slices.pop()  # to reduce it to 20 slices
-
-        fig = plt.figure()
-        for num, each_slice in enumerate(new_slices):
-            y = fig.add_subplot(4, 5, num+1)
-            y.imshow(each_slice)
-        plt.show()
-
-
-if __name__ == '__main__':
-    main()
+root.mainloop()
