@@ -1,7 +1,7 @@
 import os
 import pydicom
 import matplotlib.pyplot as plt
-from tkinter import Tk, Button, Listbox, Scrollbar, Frame, RIGHT, END
+from tkinter import Tk, Button, Listbox, Scrollbar, Frame, Label, RIGHT, END
 from tkinter.filedialog import askdirectory
 
 
@@ -27,7 +27,6 @@ def open_folder():
         view(folder + "/" + path)
 
     folder = askdirectory()
-    print(folder)
     flist = os.listdir(folder)
 
     sb = Scrollbar(frm, orient='vertical')
@@ -42,5 +41,8 @@ def open_folder():
 
 file_path = Button(root, text="Choose Folder (.dcm)", command=open_folder)
 file_path.pack()
+
+lab = Label(root, text="Double click the folder \n and then click OK")
+lab.pack()
 
 root.mainloop()
