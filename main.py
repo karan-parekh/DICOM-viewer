@@ -7,7 +7,6 @@ from tkinter.filedialog import askdirectory
 
 def view(path):
     dataset = pydicom.read_file(path)
-    print("Slice location...:", dataset.get('SliceLocation', "(missing)"))
     plt.imshow(dataset.pixel_array, cmap=plt.cm.bone)
     plt.show()
 
